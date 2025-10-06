@@ -8,7 +8,47 @@
         name:
           - docker.io
           - git
-…      args:
+          # Installing pip allows us to install the classic docker-compose package reliably
+          - python3-pip
+        state: present
+
+    # NEW TASK: Install classic docker-compose using pip
+    - name: Install docker-compose using pip (reliable method)
+      ansible.builtin.pip:
+        name: docker-compose
+        state: present
+        
+    # 2. Add the EC2 user (usually 'ubuntu') to the 'docker' group
+    - name: Add ubuntu user to docker group
+      ansible.builtin.user:
+        name: ubuntu
+        groups: docker
+        append: yes
+
+    # 3. CRITICAL FIX: Handler required for group change
+    - name: Restart SSH to pick up new docker group membership
+      ansible.builtin.meta:
+        # This will flush handlers and run the handler below immediately
+        flush_handlers: true
+      notify: Reboot and Wait
+
+    # 4. Clone the repository
+    - name: Clone repo (Web-AI-Inference-Service-on-a-VM.git)
+      ansible.builtin.git:
+        repo: "https://github.com/josantoss/Web-AI-Inference-Service-on-a-VM.git"
+        dest: "/home/ubuntu/ai_inference_app"
+        version: main
+        force: yes
+        become: no
+        
+    # 5. Run docker-compose (using the classic hyphenated command format for pip install)
+    - name: Build and start the Docker application
+      ansible.builtin.shell: |
+        # Use the classic v1 command format (docker-compose)
+        cd /home/ubuntu/ai_inference_app
+        docker-compose down || true
+        docker-compose up -d --build
+      args:
         executable: /bin/bash
       become: no
 
