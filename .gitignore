@@ -1,0 +1,22 @@
+Virtual Environment
+venv/
+.venv/
+.env.example
+
+Docker/Build Artefacts
+pycache/
+*.pyc
+
+Operating System Files
+.DS_Store
+
+Temporary files, Archives, or large local data
+ai_inference_app.zip
+
+--- Terraform/Infrastructure Ignores ---
+Terraform state files (sensitive and tracked remotely)
+*.tfstate
+.tfstate.
+
+Terraform cache and provider binaries (the source of the 786MB file)
+.terraform/
