@@ -1,55 +1,14 @@
 - hosts: ai_vm
   become: yes
   tasks:
-    # 1. Install Docker, Docker Compose, and Git
+    # 1. Install Docker, Git, and Python PIP (for docker-compose)
     - name: Update apt and install packages
       ansible.builtin.apt:
         update_cache: yes
         name:
           - docker.io
-          # CRITICAL FIX: The name of the Docker Compose package changed.
-          # We use 'docker-compose-plugin' for modern installations or ensure 'python3-pip'
-          # for older Docker Compose version 1 installations. Using the shell module
-          # for direct download is often safest, but we'll try the package name first.
-          - docker-compose-plugin # Use this for Docker Compose v2 (recommended)
           - git
-        state: present
-
-    # 2. Add the EC2 user (usually 'ubuntu') to the 'docker' group
-    - name: Add ubuntu user to docker group
-      ansible.builtin.user:
-        name: ubuntu
-        groups: docker
-        append: yes
-
-    # 3. CRITICAL FIX: Handler required for group change
-    - name: Restart SSH to pick up new docker group membership
-      ansible.builtin.meta:
-        # This will flush handlers and run the handler below immediately
-        flush_handlers: true
-      notify: Reboot and Wait
-
-    # 4. Clone the repository
-    - name: Clone repo (Web-AI-Inference-Service-on-a-VM.git)
-      ansible.builtin.git:
-        repo: "https://github.com/josantoss/Web-AI-Inference-Service-on-a-VM.git"
-        dest: "/home/ubuntu/ai_inference_app"
-        version: main
-        force: yes
-        # CRITICAL FIX: Ensure the clone runs as the unprivileged 'ubuntu' user
-        # so subsequent commands run in the home directory correctly.
-        # This prevents permission denied errors when the app runs.
-        become: no
-        
-    # 5. Run docker-compose
-    - name: Build and start the Docker application
-      ansible.builtin.shell: |
-        # Use the new v2 command format (docker compose)
-        cd /home/ubuntu/ai_inference_app
-        docker compose down || true
-        docker compose up -d --build
-      args:
-        # IMPORTANT: Run this command as the 'ubuntu' user who is now in the 'docker' group
+…      args:
         executable: /bin/bash
       become: no
 
