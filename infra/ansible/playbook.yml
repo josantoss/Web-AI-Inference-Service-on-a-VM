@@ -24,12 +24,8 @@
         name: ubuntu
         groups: docker
         append: yes
-
-    # 3. CRITICAL FIX: Handler required for group change
-    - name: Restart SSH to pick up new docker group membership
-      ansible.builtin.meta:
-        # This will flush handlers and run the handler below immediately
-        flush_handlers: true
+      # CRITICAL FIX: The reboot MUST happen after the group change takes place.
+      # We notify the handler directly from this task.
       notify: Reboot and Wait
 
     # 4. Clone the repository
