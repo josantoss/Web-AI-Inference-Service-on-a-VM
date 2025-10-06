@@ -1,0 +1,30 @@
+- hosts: ai_vm
+  become: yes
+  tasks:
+    - name: Update apt and install packages
+      apt:
+        update_cache: yes
+        name:
+          - docker.io
+          - docker-compose
+          - git
+        state: present
+
+    - name: Add ubuntu to docker group
+      user:
+        name: ubuntu
+        groups: docker
+        append: yes
+
+    - name: Clone repo (replace with your repo URL)
+      git:
+        repo: "https://github.com/<your-username>/ai_inference_app.git"
+        dest: "/home/ubuntu/ai_inference_app"
+        version: main
+        force: yes
+
+    - name: Run docker-compose
+      shell: |
+        cd /home/ubuntu/ai_inference_app
+        docker-compose down || true
+        docker-compose up -d --build

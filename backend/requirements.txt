@@ -1,0 +1,16 @@
+# Pinned minimal requirements to produce repeatable builds and avoid
+# unexpected platform-specific (CUDA) wheel selection during pip
+# resolution. We request the CPU PyTorch wheels from the official
+# PyTorch index in the Dockerfile (see Dockerfile change).
+fastapi==0.118.0
+uvicorn[standard]==0.37.0
+transformers==4.57.0
+# Use a CPU-only torch wheel. The `+cpu` suffix is resolved when using
+# the PyTorch CPU extra index URL in the Dockerfile.
+torch==2.8.0+cpu
+pydantic==2.11.10
+fastapi
+uvicorn[standard]
+transformers>=4.0.0
+torch
+pydantic
