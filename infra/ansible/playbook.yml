@@ -30,12 +30,14 @@
 
     # 4. Clone the repository
     - name: Clone repo (Web-AI-Inference-Service-on-a-VM.git)
+      # --- FIX: Move 'become: no' here (Task level) ---
+      become: no 
       ansible.builtin.git:
         repo: "https://github.com/josantoss/Web-AI-Inference-Service-on-a-VM.git"
         dest: "/home/ubuntu/ai_inference_app"
         version: main
         force: yes
-        become: no
+        # Removed 'become: no' from here (Module level)
         
     # 5. Run docker-compose (using the classic hyphenated command format for pip install)
     - name: Build and start the Docker application
