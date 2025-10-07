@@ -2,6 +2,7 @@ Virtual Environment
 venv/
 .venv/
 .env.example
+ssh_key.pem
 
 Docker/Build Artefacts
 pycache/
