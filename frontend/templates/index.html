@@ -1,15 +1,87 @@
-<!doctype html>
-<html>
-  <head>
-    <meta charset="utf-8"/>
-    <title>Sentiment UI</title>
-  </head>
-  <body>
-    <h1>Sentiment Inference</h1>
-    <form method="POST">
-      <textarea name="text" rows="6" cols="70" placeholder="Type text here..."></textarea><br/>
-      <button type="submit">Analyze</button>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Sentiment Analyzer</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background: linear-gradient(135deg, #e0f7fa, #e3f2fd);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .container {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      padding: 2rem;
+      width: 100%;
+      max-width: 600px;
+      transition: transform 0.2s ease;
+    }
+    .container:hover {
+      transform: translateY(-3px);
+    }
+  </style>
+</head>
+<body>
+  <div class="container text-center">
+    <h1 class="text-3xl font-bold text-gray-800 mb-4">AI Sentiment Analyzer</h1>
+    <p class="text-gray-600 mb-6">Enter any sentence below to analyze its sentiment.</p>
+
+    <form method="POST" class="mb-6">
+      <textarea 
+        name="text" 
+        rows="5" 
+        class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-400" 
+        placeholder="Type something like: I love this app!"></textarea>
+      <button 
+        type="submit" 
+        class="mt-4 w-full bg-blue-500 text-white font-semibold py-2 rounded-lg hover:bg-blue-600 transition">
+        Analyze Sentiment
+      </button>
     </form>
-    <pre>{% if result %}{{ result | tojson(indent=2) }}{% endif %}</pre>
-  </body>
+
+    {% if error %}
+      <div class="bg-red-100 text-red-700 border border-red-300 rounded-md p-3 mb-4">
+        {{ error }}
+      </div>
+    {% endif %}
+
+    {% if result and result[0] %}
+  {% set analysis = result[0] %}
+  <div class="bg-green-50 border border-green-300 rounded-lg p-4 text-left">
+    <h2 class="font-semibold text-xl text-green-700 mb-3">Analysis Result</h2>
+    
+    <div class="mb-2">
+      <span class="font-bold text-gray-700">Input Text:</span>
+      <span class="text-gray-600">{{ analysis.input }}</span>
+    </div>
+
+    <div class="mb-2">
+      <span class="font-bold text-gray-700">Prediction:</span>
+      <span class="text-2xl font-extrabold {% if analysis.label == 'POSITIVE' %}text-green-600{% else %}text-red-600{% endif %} ml-2">
+        {{ analysis.label }}
+      </span>
+    </div>
+
+    <div>
+      <span class="font-bold text-gray-700">Confidence Score:</span>
+      <span class="text-xl text-blue-600 font-semibold ml-2">
+        {{ (analysis.score * 100) | round(2) }}% 
+      </span>
+    </div>
+  </div>
+  {% elif result and not result[0] %}
+  <div class="bg-red-100 text-red-700 border border-red-300 rounded-md p-3 mb-4">
+    Error: Backend did not return expected analysis data.
+  </div>
+{% endif %}
+  </div>
+</body>
 </html>

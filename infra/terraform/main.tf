@@ -60,3 +60,8 @@ resource "aws_instance" "ai_vm" {
 output "instance_ip" {
   value = aws_instance.ai_vm.public_ip
 }
+
+
+
+
+

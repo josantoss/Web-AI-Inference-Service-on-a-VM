@@ -17,5 +17,8 @@ async def predict(request: Request):
     text = data.get("text", "")
     if not text or not text.strip():
         return {"error": "text field is required"}, 400
+    # print("I am analysing the result")
     result = nlp(text)[0]
-    return {"input": text, "label": result["label"], "score": float(result["score"])}
+    print("Now I am done")
+    return {"input": text, "label": result["label"], "score": float(result["score"])} ,200
+    
