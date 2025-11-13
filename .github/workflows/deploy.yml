@@ -30,4 +30,8 @@ jobs:
             cd ~/ai_inference_app
             sudo docker-compose down || true
             sudo docker-compose up -d --build
-            sudo docker system prune -a -y
+             # --- CRITICAL FIX AND STORAGE MANAGEMENT ---
+            # 1. Correct the flag: Use -f (force) instead of -y.
+            # 2. Add -v to remove unused volumes (huge space saver).
+            # This cleans all old images, networks, and build cache/volumes automatically.
+            sudo docker system prune -a -f
